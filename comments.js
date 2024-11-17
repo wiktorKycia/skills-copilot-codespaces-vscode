@@ -1,17 +1,22 @@
-// Create web server
+// Importowanie wymaganych modułów
 var express = require('express');
 var fs = require('fs');
 var app = express();
 var bodyParser = require('body-parser');
-app.use(bodyParser.json());
 var cors = require('cors');
+
+// Konfiguracja middleware
+app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
+
+// Ustawienie portu serwera
 var port = 3000;
 app.listen(port, function () {
   console.log('Server is running on port ' + port);
 });
-// Create route for comments
+
+// Trasa do pobierania komentarzy
 app.get('/comments', function (req, res) {
   fs.readFile('comments.json', 'utf8', function (err, data) {
     if (err) {
@@ -20,7 +25,8 @@ app.get('/comments', function (req, res) {
     res.send(data);
   });
 });
-// Create route to post comments
+
+// Trasa do dodawania komentarzy
 app.post('/comments', function (req, res) {
   fs.readFile('comments.json', 'utf8', function (err, data) {
     if (err) {
@@ -36,7 +42,8 @@ app.post('/comments', function (req, res) {
     });
   });
 });
-// Create route to delete comments
+
+// Trasa do usuwania komentarzy
 app.delete('/comments/:id', function (req, res) {
   fs.readFile('comments.json', 'utf8', function (err, data) {
     if (err) {
@@ -59,7 +66,8 @@ app.delete('/comments/:id', function (req, res) {
     }
   });
 });
-// Create route to edit comments
+
+// Trasa do edytowania komentarzy
 app.put('/comments/:id', function (req, res) {
   fs.readFile('comments.json', 'utf8', function (err, data) {
     if (err) {
@@ -76,12 +84,9 @@ app.put('/comments/:id', function (req, res) {
           console.log(err);
         }
         res.send('Comment edited');
-      }
-        );
-    }
-    else {
+      });
+    } else {
       res.send('Comment not found');
     }
-    });
-}
-);
+  });
+});
