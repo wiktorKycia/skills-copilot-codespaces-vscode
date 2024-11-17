@@ -13,8 +13,15 @@ app.get('/comments', function (req, res) {
   fs.readFile('comments.json', 'utf8', function (err, data) {
     if (err) {
       console.log(err);
+      res.status(500).send('Internal Server Error');
+      return;
     }
-    res.send(data);
+    try {
+      var comments = JSON.parse(data);
+      res.send(comments);
+    } catch (e) {
+      res.status(500).send('Error parsing JSON');
+    }
   });
 });
 
@@ -23,8 +30,15 @@ app.post('/comments', function (req, res) {
     fs.readFile('comments.json', 'utf8', function (err, data) {
         if (err) {
             console.log(err);
+            res.status(500).send('Internal Server Error');
+            return;
         }
-        var comments = JSON.parse(data);
+        var comments;
+        try {
+            comments = JSON.parse(data);
+        } catch (e) {
+            comments = [];
+        }
         var newComment = {
             id: Date.now().toString(),
             message: req.body.message
@@ -33,6 +47,8 @@ app.post('/comments', function (req, res) {
         fs.writeFile('comments.json', JSON.stringify(comments), function (err) {
             if (err) {
                 console.log(err);
+                res.status(500).send('Internal Server Error');
+                return;
             }
             res.send('Comment added');
         });
@@ -44,8 +60,15 @@ app.delete('/comments/:id', function (req, res) {
   fs.readFile('comments.json', 'utf8', function (err, data) {
     if (err) {
       console.log(err);
+      res.status(500).send('Internal Server Error');
+      return;
     }
-    var comments = JSON.parse(data);
+    var comments;
+    try {
+      comments = JSON.parse(data);
+    } catch (e) {
+      comments = [];
+    }
     var comment = comments.find(function (comment) {
       return comment.id === req.params.id;
     });
@@ -54,6 +77,8 @@ app.delete('/comments/:id', function (req, res) {
       fs.writeFile('comments.json', JSON.stringify(comments), function (err) {
         if (err) {
           console.log(err);
+          res.status(500).send('Internal Server Error');
+          return;
         }
         res.send('Comment deleted');
       });
@@ -68,8 +93,15 @@ app.put('/comments/:id', function (req, res) {
     fs.readFile('comments.json', 'utf8', function (err, data) {
         if (err) {
             console.log(err);
+            res.status(500).send('Internal Server Error');
+            return;
         }
-        var comments = JSON.parse(data);
+        var comments;
+        try {
+            comments = JSON.parse(data);
+        } catch (e) {
+            comments = [];
+        }
         var comment = comments.find(function (comment) {
             return comment.id === req.params.id;
         });
@@ -78,6 +110,8 @@ app.put('/comments/:id', function (req, res) {
             fs.writeFile('comments.json', JSON.stringify(comments), function (err) {
                 if (err) {
                     console.log(err);
+                    res.status(500).send('Internal Server Error');
+                    return;
                 }
                 res.send('Comment edited');
             });
