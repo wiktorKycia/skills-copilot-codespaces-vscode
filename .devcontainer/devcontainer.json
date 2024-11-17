@@ -4,8 +4,10 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "GitHub.copilot"
+                "GitHub.copilot",
+                "ms-azuretools.vscode-docker"
             ]
         }
-    }
+    },
+    "postCreateCommand": "npm install -g express cors"
 }
